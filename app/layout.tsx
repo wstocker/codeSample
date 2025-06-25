@@ -7,7 +7,7 @@ import "@/styles/globals.css"
 
 export const metadata: Metadata = {
   title: {
-    default: "Next.js for Drupal",
+    default: "Next.js and Drupal Dem0",
     template: "%s | Next.js for Drupal",
   },
   description: "A Next.js site powered by a Drupal backend.",

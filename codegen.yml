@@ -1,0 +1,27 @@
+overwrite: true
+schema: "http://localhost:3000/api/test-graphql"
+documents: "**/*.{ts,tsx}"
+generates:
+  types/generated.ts:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+    config:
+      skipTypename: false
+      withHooks: false
+      withComponent: false
+      withHOC: false
+      scalars:
+        DateTime: string
+        Date: string
+        Time: string
+        JSON: string
+        JSONObject: string
+        UUID: string
+        URI: string
+        HTML: string
+        Markdown: string
+        UnsignedInt: number
+        UnsignedFloat: number
+        BigInt: string
+        Decimal: string 
