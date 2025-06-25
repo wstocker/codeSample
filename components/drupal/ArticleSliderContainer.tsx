@@ -3,6 +3,7 @@ import { drupal } from "@/lib/drupal"
 import { DrupalArticle } from "@/types"
 
 interface ArticleSliderContainerProps {
+  // title property is optional
   title?: string
 }
 
@@ -47,13 +48,7 @@ export async function ArticleSliderContainer({
 
     const articles = data?.nodeArticles?.nodes || []
 
-    return (
-      <ArticleSliderClient
-        articles={articles}
-        title={title}
-        usingMockData={false}
-      />
-    )
+    return <ArticleSliderClient articles={articles} title={title} />
   } catch (error) {
     console.error("Error fetching articles from Drupal:", error)
   }
