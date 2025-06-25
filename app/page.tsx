@@ -3,6 +3,7 @@ import { ArticleSliderContainer } from "@/components/drupal/ArticleSliderContain
 import { drupal } from "@/lib/drupal"
 import type { Metadata } from "next"
 import type { DrupalArticle } from "@/types"
+import { Alert } from "@/components/Alert"
 
 export const metadata: Metadata = {
   description: "A Next.js site powered by a Drupal backend.",
@@ -45,6 +46,9 @@ export default async function Home() {
 
   return (
     <>
+      {/* Alert at the top */}
+      <Alert message="Welcome to our site! Check out our latest articles below." type="blue" />
+      
       <h1 className="mb-10 text-6xl text-pink-500">Latest Articles.</h1>
       
       {/* Article Slider with State Lifting Demo */}
