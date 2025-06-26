@@ -9,33 +9,45 @@ function trimText(text: string, maxLength: number = 350): string {
     : text
 }
 
-export async function POST(
+export async function GET(
   request: NextRequest,
-  { params }: { params: { index: string } }
+  { params }: { params: Promise<{ index: string }> }
 ) {
   try {
-    const body = await request.json()
-    const { index } = params
+    const { searchParams } = new URL(request.url)
+    const query = searchParams.get('q') || ''
+    const { index } = await params
 
-    const searchResponse = await drupal.getSearchIndex(index, body)
+    // Make direct request to Drupal's JSON:API search endpoint
+    const searchUrl = `${process.env.NEXT_PUBLIC_DRUPAL_BASE_URL}/jsonapi/index/${index}?filter%5Bfulltext%5D=${encodeURIComponent(query)}`
     
-    // Handle both array and object responses from Search API
-    const data = Array.isArray(searchResponse) ? searchResponse : (searchResponse as any).data || []
-    const meta = Array.isArray(searchResponse) ? null : (searchResponse as any).meta
+    const response = await fetch(searchUrl, {
+      headers: {
+        'Accept': 'application/vnd.api+json',
+      },
+    })
+
+    if (!response.ok) {
+      throw new Error(`Search request failed: ${response.status}`)
+    }
+
+    const searchResponse = await response.json()
+    const data = searchResponse.data || []
+    const meta = searchResponse.meta
     
     // Transform the Search API response to match frontend expectations
     const results = data.map((item: any) => ({
       id: item.id,
-      title: item.title || 'Untitled',
-      url: `/node/${item.drupal_internal__nid || item.id}`,
-      excerpt: trimText(item.body?.summary || item.body?.value || 'No excerpt available', 350),
+      title: item.attributes?.title || 'Untitled',
+      url: `/node/${item.attributes?.drupal_internal__nid || item.id}`,
+      excerpt: trimText(item.attributes?.body?.summary || item.attributes?.body?.value || 'No excerpt available', 350),
       type: item.type?.replace('node--', '') || 'unknown',
-      created: item.created || item.changed || new Date().toISOString()
+      created: item.attributes?.created || item.attributes?.changed || new Date().toISOString()
     }))
 
     return NextResponse.json({
       results,
-      query: body.params?.filter?.fulltext || '',
+      query,
       total: meta?.count || results.length
     })
   } catch (error) {

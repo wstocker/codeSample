@@ -1,14 +1,20 @@
 "use client"
 
+import { useState } from "react"
 import { AlertCloseButton } from "./AlertCloseButton"
 
-interface AlertProps {
+interface InteractiveAlertProps {
   children: React.ReactNode
   type: "red" | "blue" | "green"
 }
 
-// Server component - renders the alert content
-export function Alert({ children, type }: AlertProps) {
+export function InteractiveAlert({ children, type }: InteractiveAlertProps) {
+  const [isVisible, setIsVisible] = useState(true)
+
+  if (!isVisible) {
+    return null
+  }
+
   return (
     <div id="alert-1" className={`flex items-center p-4 mb-4 text-${type}-800 rounded-lg bg-${type}-50 bg-white border border-${type}-200`} role="alert">
       <svg className="shrink-0 w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
@@ -18,9 +24,7 @@ export function Alert({ children, type }: AlertProps) {
       <div className="ms-3 text-sm font-medium">
         {children}
       </div>
-      <AlertCloseButton type={type} />
+      <AlertCloseButton type={type} onClose={() => setIsVisible(false)} />
     </div>
   )
-}
-
-export default Alert
+} 

@@ -51,5 +51,6 @@ export async function ArticleSliderContainer({
     return <ArticleSliderClient articles={articles} title={title} />
   } catch (error) {
     console.error("Error fetching articles from Drupal:", error)
+    return <div>Unable to load articles at this time.</div>
   }
 }
